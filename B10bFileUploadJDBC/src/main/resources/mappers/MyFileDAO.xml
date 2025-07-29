@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 매퍼 정의를 위한 Doctype 설정 -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 인터페이스와 연결은 namespace를 통해 설정 -->
+<mapper namespace="com.edu.springboot.myfile.IMyFileService">
+   <!-- 첨부파일 등록. 사용자가 전송한 폼값은 DTO를 통해 한번에 받아서 전달됨. -->
+   <insert id="insertFile" parameterType="com.edu.springboot.myfile.MyFileDTO">
+      INSERT INTO myfile (idx, title, cate, ofile, sfile)
+      VALUES
+      (seq_board_num.nextval, #{title}, #{cate}, #{ofile}, #{sfile})
+   </insert>
+   
+   <!-- 파일 목록 -->
+   <select id="selectFile" resultType="com.edu.springboot.myfile.MyFileDTO">
+      SELECT * FROM myfile ORDER BY idx DESC
+   </select>
+</mapper>

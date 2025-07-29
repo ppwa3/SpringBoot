@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Mybatis 매퍼를 만들기 위한 Doctype 설정 -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.springboot.jdbc.ITicketService">
+	<!-- 티켓 구매 금액 입력 -->
+	<insert id="payInsert"
+		parameterType="com.edu.springboot.jdbc.PayDTO">
+			insert into transaction_pay (userid, amount)
+				values (#{userid}, #{amount})
+	</insert>
+	
+	<!-- 티켓 매수 입력 -->
+	<insert id="ticketInsert"
+		parameterType="com.edu.springboot.jdbc.TicketDTO">
+			insert into transaction_ticket (userid, t_count)
+				values (#{userid}, #{t_count})
+	</insert>
+	
+	<!--
+	티켓을 구매한 회원에 대한 로그를 남기기 위해 패스워드와 이름은 임의의
+	값을 입력한다. -->
+	<insert id="memberRegist"
+		parameterType="com.edu.springboot.jdbc.TicketDTO">
+			insert into member (id, pass, name)
+				values (#{userid}, '^^', '티켓구매')
+	</insert>
+</mapper>	

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Mapper 파일을 구성하기 위한 Doctype 설정 -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+컨트롤러와 Mapper 사이에서 매개역할을 하는 인터페이스를 namespace로 지정한다.
+xml파일에서는 클래스에 대한 import가 불가능하므로 아래와 같이 패키지의 풀경로를
+명시해야한다. -->
+<mapper namespace="com.edu.springboot.jdbc.IMemberService">
+	<!-- 
+	매퍼에서 쿼리문을 실행하기 위한 엘리먼트
+	: DML의 4가지 쿼리문과 동일한 이름의 엘리먼트가 존재한다. 즉 select
+	쿼리는 <select> 엘리먼트를 사용하면된다.
+	 -->
+	<!-- 
+	하위 프로퍼티
+	id : 컨트롤러에서 호출하기 위한 메서드명을 기술한다. Java와 같이 메서드의
+		원형을 사용하지 않고, 단지 메서드명만 명시하면된다.
+	resultType : 쿼리문 실행 후 반환할 결과의 타입을 명시한다.
+		select문의 경우 ResultSet이 반환되므로, 이를 저장하기 위한 DTO를
+		지정하면되고, 갯수가 2개 이상이라면 Mapper가 알아서 List에 add()
+		해준다.
+		insert, update, delete와 같이 행의 변화가 있는 쿼리문은 결과로
+		int를 반환하므로 따로 명시하지 않는다.
+	parameterType : 메서드 호출시 파라미터로 사용할 클래스명을 명시한다.
+		개발자가 직접 정의한 클래스 외에도 Map, List와 같은 컬렉션을
+		사용할 수 있다. 또한 필요하지 않다면 생략할 수 있다.
+	 -->
+<!--<select id="select"
+	resultType="com.edu.springboot.jdbc.MemberDTO">
+	select * from member order by regidate desc
+	</select>-->
+	
+	<!-- 
+	Mapper에서 조건문과 반복문을 추가할때는 if태그, foreach태그를 사용한다.
+	조건문 : <if>
+		test에 조건을 추가한다. 사용법은 JSTL과 동일하다.
+	반복문 : <foreach>
+		collection : 반복을 위해 사용할 컬렉션 변수명 지정
+		item : 반복시 해당 루프에서 반환되는 객체를 저장할 변수
+		open : 쿼리문 시작 부분에 추가할 문자열
+		close : 종료 부분에 추가할 문자열 
+		separator : 쿼리문 반복시 구분자로 사용할 문자열
+		Ex) 컬럼명 in (항목1, 항목2) 를 foreach로 구성하면
+			==>
+			컬럼명 in
+				<foreach collection="항목이 포함된 List" item="변수명"
+			 		open="("close=")"separator=",">
+	 -->
+	<select id="select" parameterType="com.edu.springboot.jdbc.MemberDTO"
+			resultType="com.edu.springboot.jdbc.MemberDTO">
+		select * from member
+		<!-- 
+		파라미터 형식이
+			요청명?searchKeyword=aaa -> 값이 있음
+			요청명?searchKeyword= -> 빈값으로 지정됨. ''로 체크.
+			요청명> -> 변수명 자체가 없으므로 null로 지정됨. null인지 체크. -->
+		<if test="searchKeyword!=null and !searchKeyword.equals('')">
+			where
+			<!-- 
+			like절이 있는 쿼리문을 or로 연결해서 쿼리문을 생성해준다.
+			(name like '%검색어%' or id like '%검색어%')
+			-->
+			<foreach collection="searchField" item="sfield" open="(" close=")"
+				separator="or">
+				${sfield} like '%'||#{searchKeyword}||'%'	
+			</foreach>
+		</if>
+		order by regidate desc
+		</select>
+	
+	<!-- 
+	회원등록 : request내장객체를 통해 받은 파라미터를 개별적으로 전달한
+		값으로 인파라미터를 채워준다. 이 경우 DTO와 같은 클래스를 사용하지
+		않으므로 parameterType은 명시하지 않는다.
+		전달되는 3개의 인수는 순서대로 param1,2,3과 같이 기술하면된다.
+	 -->
+	<insert id="insert">
+		insert into member (id, pass, name) values
+			(#{param1}, #{param2}, #{param3})
+	</insert>
+	
+	<!-- 
+	회원정보 인출 : 파라미터를 @Param 어노테이션으로 변경한 후 전달하므로
+		변경된 이름으로 인파라미터를 설정한다. -->
+	<select id="selectOne"
+	resultType="com.edu.springboot.jdbc.MemberDTO">
+	select * from member where id=#{_id}
+	</select>
+	<!-- 
+	수정처리 : Map에 저장된 파라미터를 받으므로 parameterType에 Map을
+		명시한다. Map은 자바의 기본클래스지만 패키지의 풀경로를 명시해야한다.
+		그리고 Key로 저장된 값을 얻어온 후 인파라미터를 설정한다.
+	 -->
+	<update id="update"
+		parameterType="java.util.HashMap">
+		update member set pass=#{m_pass},
+			name=#{m_name} where id=#{m_id}
+	</update>
+	
+	<!-- 
+	삭제처리 : 파라미터 순서대로 배열처럼 0,1,2 와 같이 인파라미터를
+		설정할 수 있다. -->
+	<delete id="delete"
+		parameterType="com.edu.springboot.jdbc.MemberDTO">
+		delete from member where id=#{0}
+	</delete>
+	
+</mapper>
