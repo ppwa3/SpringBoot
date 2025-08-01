@@ -8,11 +8,11 @@ plugins {
 group = 'com.edu'
 version = '0.0.1-SNAPSHOT'
 
-java { 
+java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-}
+} 
 
 configurations {
 	compileOnly {
@@ -22,7 +22,7 @@ configurations {
 
 repositories {
 	mavenCentral()
-	maven{url='https://repo.spring.io/snapshot'}
+	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 //다이나믹 웹 모듈 설정
@@ -30,12 +30,17 @@ eclipse.wtp.facet {
     facet name: 'jst.web', version: '5.0'
 }
 
+
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
 	//JSP 사용을 위한 의존성 추가
@@ -43,18 +48,8 @@ dependencies {
 	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
 	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-	
-	//JDBC설정
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
-	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'	
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-//웹애플리케이션 서버에 배포를 위한 설정
-bootWar.enabled = false
-war.enabled = true

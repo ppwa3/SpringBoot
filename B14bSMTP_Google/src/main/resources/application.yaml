@@ -1,0 +1,24 @@
+#포트설정
+server:
+  port: '8586'
+#JSP설정
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+#SMTP설정
+  mail:
+    host: smtp.gmail.com
+    port: '587'
+    username: hyx.lim2@gmail.com
+    password: jqvs bxhc vmcc omlq
+    properties:
+      mail:
+        debug: 'true'
+        smtp:
+          connectiontimeout: '5000'
+          auth: 'false'
+          starttls:
+             enable: 'true'
+             required: 'true'

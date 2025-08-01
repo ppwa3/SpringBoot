@@ -1,14 +1,14 @@
 plugins {
 	id 'java'
 	id 'war'
-	id 'org.springframework.boot' version '3.4.8-SNAPSHOT'
+	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.edu'
 version = '0.0.1-SNAPSHOT'
 
-java { 
+java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
@@ -22,7 +22,6 @@ configurations {
 
 repositories {
 	mavenCentral()
-	maven{url='https://repo.spring.io/snapshot'}
 }
 
 //다이나믹 웹 모듈 설정
@@ -33,6 +32,7 @@ eclipse.wtp.facet {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -43,18 +43,8 @@ dependencies {
 	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
 	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-	
-	//JDBC설정
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
-	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'	
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-//웹애플리케이션 서버에 배포를 위한 설정
-bootWar.enabled = false
-war.enabled = true
